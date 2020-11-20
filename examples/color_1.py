@@ -10,10 +10,15 @@ import lynx
 ds = xr.open_dataset(gdf.get("netcdf_files/uv300.nc")).isel(time=1)
 
 projection = ccrs.PlateCarree()
+levels = np.arange(-16, 48, 4)
 
-# lynx.contourf(ds, projection,
-#               title="Default Color",
-#               lefttitle="Zonal Wind",
-#               righttitle="m/s",
-#               colormap=gvcmaps.ncl_default,
-#               levels=levels)
+cplot = lynx.Contour(ds.U,
+                     flevels=levels,
+                     clevels=levels,
+                     projection=projection,
+                     cmap=gvcmaps.ncl_default,
+                     maintitle="Default Color",
+                     lefttitle=ds.U.long_name,
+                     righttitle=ds.U.units)
+
+cplot.show()

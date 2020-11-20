@@ -1,8 +1,10 @@
 import matplotlib.pyplot as plt
 import cartopy.feature as cfeature
+import numpy as np
 
 from geocat.viz.util import add_major_minor_ticks
 from geocat.viz.util import set_titles_and_labels
+from geocat.viz.util import set_axes_limits_and_ticks
 
 class NCL_Plot:
 
@@ -23,14 +25,25 @@ class NCL_Plot:
         self.ylabel = kwargs.get('ylabel')
 
         # Set up figure
-        self._set_up_fig(w=10, h=10)
+        self._set_up_fig()
+
 
         # Set up axes
         if kwargs.get('projection') is not None:
             self.projection = kwargs.get('projection')
-            self._set_up_axes()
+            self.ax = plt.axes(projection=self.projection)
+            self.ax.coastlines(linewidths=0.5, alpha=0.6)
         else:
-            self.ax = self.fig.gca()
+            self.ax = plt.axes()
+
+
+        set_axes_limits_and_ticks(self.ax,
+                                 xlim=(-180, 180),
+                                 ylim=(-90, 90),
+                                 xticks=np.linspace(-180, 180, 13),
+                                 yticks=np.linspace(-90, 90, 7))
+        
+        self._set_NCL_style(self.ax)
 
         # Set specified features
         if kwargs.get('show_land') is True:
@@ -41,15 +54,6 @@ class NCL_Plot:
         
         if kwargs.get('show_lakes') is True:
             self.show_lakes()
-
-        # Set NCL-style tick marks
-        # TODO: switch from using geocat-viz to using a geocat-lynx specific tick function
-        add_major_minor_ticks(self.ax)
-
-        # Set NLC-style titles set from from initialization call
-        # TODO: switch from using geocat-viz to using a geocat-lynx specific title function
-        set_titles_and_labels(self.ax, self.main_title, self.left_title, self.right_title, self.xlabel, self.ylabel)
-
 
     def _set_up_fig(self, w=None, h=None):
 
@@ -62,9 +66,15 @@ class NCL_Plot:
 
         self.fig = plt.figure(figsize=(w, h))
 
-    def _set_up_axes(self, lw=0.5):
-        self.ax = plt.axes(projection=self.projection)
-        self.ax.coastlines(linewidths=lw)
+    def _set_NCL_style(self, ax):
+        # Set NCL-style tick marks
+        # TODO: switch from using geocat-viz to using a geocat-lynx specific tick function
+        add_major_minor_ticks(ax, labelsize=10)
+
+        # Set NLC-style titles set from from initialization call
+        # TODO: switch from using geocat-viz to using a geocat-lynx specific title function
+        set_titles_and_labels(ax, self.main_title, self.left_title, self.right_title, self.xlabel,
+                              self.ylabel)
 
     def show_land(self, color='lightgrey'):
         self.ax.add_feature(cfeature.LAND, facecolor=color)
