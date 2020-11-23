@@ -7,6 +7,7 @@ import numpy as np
 import cartopy.crs as ccrs
 
 
+
 from _plot_util import NCL_Plot
 
 class Contour(NCL_Plot):
@@ -55,8 +56,8 @@ class Contour(NCL_Plot):
             self.cf = self.ax.contourf(self.data,
                                   levels=self.levels,
                                   cmap=self.cmap,
-                                  add_colorbar=False,
-                                  transform=self.projection)
+                                  transform=self.projection,
+                                       extent=[-180, 180, -90, 90])
 
         if kwargs.get('contour_lines') is not False:
             self.cl = self.ax.contour(self.data,
@@ -65,7 +66,11 @@ class Contour(NCL_Plot):
                                   alpha=0.8,
                                   linewidths=0.4,
                                   linestyles='solid',
-                                  transform=self.projection)
+                                  transform=self.projection,
+                                 extent=[-180, 180, -90, 90])
+
+        self._set_NCL_style(self.ax)
+
 
 
     def _estimate_flevels(self):

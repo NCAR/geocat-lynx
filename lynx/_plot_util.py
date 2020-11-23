@@ -16,9 +16,9 @@ class NCL_Plot:
 
         # TODO: address input arguments
         # Pull out title arguments
-        self.main_title = kwargs.get('main_title')
-        self.left_title = kwargs.get('left_title')
-        self.right_title = kwargs.get('right_title')
+        self.maintitle = kwargs.get('maintitle')
+        self.lefttitle = kwargs.get('lefttitle')
+        self.righttitle = kwargs.get('righttitle')
 
         # Pull out axes label arguments
         self.xlabel = kwargs.get('xlabel')
@@ -42,8 +42,6 @@ class NCL_Plot:
                                  ylim=(-90, 90),
                                  xticks=np.linspace(-180, 180, 13),
                                  yticks=np.linspace(-90, 90, 7))
-        
-        self._set_NCL_style(self.ax)
 
         # Set specified features
         if kwargs.get('show_land') is True:
@@ -66,15 +64,33 @@ class NCL_Plot:
 
         self.fig = plt.figure(figsize=(w, h))
 
-    def _set_NCL_style(self, ax):
+    def _set_NCL_style(self, ax, fontsize=18, subfontsize=18, labelfontsize=16):
         # Set NCL-style tick marks
         # TODO: switch from using geocat-viz to using a geocat-lynx specific tick function
         add_major_minor_ticks(ax, labelsize=10)
 
         # Set NLC-style titles set from from initialization call
-        # TODO: switch from using geocat-viz to using a geocat-lynx specific title function
-        set_titles_and_labels(ax, self.main_title, self.left_title, self.right_title, self.xlabel,
-                              self.ylabel)
+        if self.maintitle is not None:
+            if self.lefttitle is not None or self.righttitle is not None:
+                plt.title(self.maintitle, fontsize=fontsize + 2, y=1.12)
+            else:
+                plt.title(self.maintitle, fontsize=fontsize, y=1.04)
+
+        if self.lefttitle is not None:
+            plt.title(self.lefttitle, fontsize=subfontsize, y=1.04, loc='left')
+
+        if self.righttitle is not None:
+            plt.title(self.righttitle,
+                         fontsize=subfontsize,
+                         y=1.04,
+                         loc='right')
+
+        if self.xlabel is not None:
+            plt.xlabel(self.xlabel, fontsize=labelfontsize)
+
+        if self.ylabel is not None:
+            plt.ylabel(self.ylabel, fontsize=labelfontsize)
+            
 
     def show_land(self, color='lightgrey'):
         self.ax.add_feature(cfeature.LAND, facecolor=color)
@@ -88,8 +104,8 @@ class NCL_Plot:
                edgecolor=ec,
                facecolor=fc)
 
-    def add_titles(self, main_title=None, left_title=None, right_title=None, xlabel=None, ylabel=None):
-        set_titles_and_labels(self.ax, main_title, left_title, right_title, xlabel, ylabel)
+    def add_titles(self, maintitle=None, lefttitle=None, righttitle=None, xlabel=None, ylabel=None):
+        set_titles_and_labels(self.ax, maintitle, lefttitle, righttitle, xlabel, ylabel)
 
     def show(self):
         plt.show()
