@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 import cartopy.feature as cfeature
 import numpy as np
+import warnings
 
 from geocat.viz.util import add_major_minor_ticks
 from geocat.viz.util import set_titles_and_labels
@@ -25,6 +26,13 @@ class NCL_Plot:
         # Pull out axes info
         self.xlim = kwargs.get('xlim')
         self.ylim = kwargs.get('ylim')
+
+        # Make sure x and y limits specified (for now)
+        #TODO: make x and y limits self-determinable somehow
+        if self.xlim is None or self.ylim is None:
+            raise AttributeError("For now, xlim and ylim must be specified as kwargs")
+
+        # Pull out tick arguments if specified
         self.xticks = kwargs.get('xticks')
         self.yticks = kwargs.get('yticks')
 
@@ -48,10 +56,10 @@ class NCL_Plot:
 
         # TODO: un-hardcode
         set_axes_limits_and_ticks(self.ax,
-                                  xlim=(-180, 180),
-                                  ylim=(-90, 90),
-                                  xticks=np.linspace(-180, 180, 13),
-                                  yticks=np.linspace(-90, 90, 7))
+                                  xlim=self.xlim,
+                                  ylim=self.ylim,
+                                  xticks=self.xticks,
+                                  yticks=self.yticks)
 
         # Set specified features
         if kwargs.get('show_land') is True:

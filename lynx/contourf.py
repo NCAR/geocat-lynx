@@ -56,7 +56,7 @@ class Contour(NCL_Plot):
                                        levels=self.levels,
                                        cmap=self.cmap,
                                        transform=self.projection,
-                                       extent=[-180, 180, -90, 90])
+                                       extent=[self.xlim[0], self.xlim[1], self.ylim[0], self.ylim[1]])
 
         if kwargs.get('contour_lines') is not False:
             self.cl = self.ax.contour(self.data,
@@ -66,7 +66,7 @@ class Contour(NCL_Plot):
                                       linewidths=0.4,
                                       linestyles='solid',
                                       transform=self.projection,
-                                      extent=[-180, 180, -90, 90])
+                                      extent=[self.xlim[0], self.xlim[1], self.ylim[0], self.ylim[1]])
 
         self._set_NCL_style(self.ax)
 
