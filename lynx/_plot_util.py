@@ -107,6 +107,22 @@ class NCL_Plot:
     def add_titles(self, maintitle=None, lefttitle=None, righttitle=None, xlabel=None, ylabel=None):
         set_titles_and_labels(self.ax, maintitle, lefttitle, righttitle, xlabel, ylabel)
 
+        # update object definitions
+        if maintitle is not None:
+            self.maintitle = maintitle
+
+        if lefttitle is not None:
+            self.lefttitle = lefttitle
+
+        if righttitle is not None:
+            self.righttitle = righttitle
+
+        if xlabel is not None:
+            self.xlabel = xlabel
+
+        if ylabel is not None:
+            self.ylabel = ylabel
+
     def show(self):
         plt.show()
 
