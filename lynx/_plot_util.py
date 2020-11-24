@@ -5,6 +5,8 @@ import numpy as np
 from geocat.viz.util import add_major_minor_ticks
 from geocat.viz.util import set_titles_and_labels
 from geocat.viz.util import set_axes_limits_and_ticks
+from geocat.viz.util import add_lat_lon_ticklabels
+
 
 class NCL_Plot:
 
@@ -14,11 +16,17 @@ class NCL_Plot:
         self._default_height = 8
         self._default_width = 10
 
-        # TODO: address input arguments
+        # TODO: address all input arguments and run checks
         # Pull out title arguments
         self.maintitle = kwargs.get('maintitle')
         self.lefttitle = kwargs.get('lefttitle')
         self.righttitle = kwargs.get('righttitle')
+
+        # Pull out axes info
+        self.xlim = kwargs.get('xlim')
+        self.ylim = kwargs.get('ylim')
+        self.xticks = kwargs.get('xticks')
+        self.yticks = kwargs.get('yticks')
 
         # Pull out axes label arguments
         self.xlabel = kwargs.get('xlabel')
@@ -30,7 +38,6 @@ class NCL_Plot:
         # Set up figure
         self._set_up_fig()
 
-
         # Set up axes with projection if specified
         if kwargs.get('projection') is not None:
             self.projection = kwargs.get('projection')
@@ -41,11 +48,10 @@ class NCL_Plot:
 
         # TODO: un-hardcode
         set_axes_limits_and_ticks(self.ax,
-                                 xlim=(-180, 180),
-                                 ylim=(-90, 90),
-                                 xticks=np.linspace(-180, 180, 13),
-                                 yticks=np.linspace(-90, 90, 7))
-
+                                  xlim=(-180, 180),
+                                  ylim=(-90, 90),
+                                  xticks=np.linspace(-180, 180, 13),
+                                  yticks=np.linspace(-90, 90, 7))
 
         # Set specified features
         if kwargs.get('show_land') is True:
@@ -53,7 +59,7 @@ class NCL_Plot:
 
         if kwargs.get('show_coastline') is True:
             self.show_coastline()
-        
+
         if kwargs.get('show_lakes') is True:
             self.show_lakes()
 
@@ -85,15 +91,18 @@ class NCL_Plot:
 
         if self.righttitle is not None:
             plt.title(self.righttitle,
-                         fontsize=subfontsize,
-                         y=1.04,
-                         loc='right')
+                      fontsize=subfontsize,
+                      y=1.04,
+                      loc='right')
 
         if self.xlabel is not None:
             plt.xlabel(self.xlabel, fontsize=labelfontsize)
 
         if self.ylabel is not None:
             plt.ylabel(self.ylabel, fontsize=labelfontsize)
+
+        # format axes as lat lon
+        add_lat_lon_ticklabels(self.ax)
 
     def _add_colorbar(self, mappable):
         self.cbar = self.fig.colorbar(mappable, orientation="horizontal", shrink=0.75, pad=0.11, drawedges=True)
@@ -106,14 +115,14 @@ class NCL_Plot:
 
     def show_coastline(self, lw=0.5):
         self.ax.add_feature(cfeature.COASTLINE, linewidths=lw)
-    
+
     def show_lakes(self, lw=0.5, ec='black', fc='None'):
         self.ax.add_feature(cfeature.LAKES,
-               linewidth=lw,
-               edgecolor=ec,
-               facecolor=fc)
+                            linewidth=lw,
+                            edgecolor=ec,
+                            facecolor=fc)
 
-    #TODO: allow changes in font size from external call
+    # TODO: allow changes in font size from external call
     def add_titles(self, maintitle=None, lefttitle=None, righttitle=None, xlabel=None, ylabel=None):
         set_titles_and_labels(self.ax, maintitle, lefttitle, righttitle, xlabel, ylabel)
 
@@ -138,4 +147,3 @@ class NCL_Plot:
 
     def get_mpl_obj(self):
         return self.fig
-
