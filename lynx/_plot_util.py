@@ -24,11 +24,14 @@ class NCL_Plot:
         self.xlabel = kwargs.get('xlabel')
         self.ylabel = kwargs.get('ylabel')
 
+        # pull out colorbar arguments
+        self.colorbar = kwargs.get('colorbar')
+
         # Set up figure
         self._set_up_fig()
 
 
-        # Set up axes
+        # Set up axes with projection if specified
         if kwargs.get('projection') is not None:
             self.projection = kwargs.get('projection')
             self.ax = plt.axes(projection=self.projection)
@@ -36,12 +39,13 @@ class NCL_Plot:
         else:
             self.ax = plt.axes()
 
-
+        # TODO: un-hardcode
         set_axes_limits_and_ticks(self.ax,
                                  xlim=(-180, 180),
                                  ylim=(-90, 90),
                                  xticks=np.linspace(-180, 180, 13),
                                  yticks=np.linspace(-90, 90, 7))
+
 
         # Set specified features
         if kwargs.get('show_land') is True:
@@ -69,7 +73,7 @@ class NCL_Plot:
         # TODO: switch from using geocat-viz to using a geocat-lynx specific tick function
         add_major_minor_ticks(ax, labelsize=10)
 
-        # Set NLC-style titles set from from initialization call
+        # Set NLC-style titles set from from initialization call (based on geocat-viz function)
         if self.maintitle is not None:
             if self.lefttitle is not None or self.righttitle is not None:
                 plt.title(self.maintitle, fontsize=fontsize + 2, y=1.12)
@@ -90,7 +94,12 @@ class NCL_Plot:
 
         if self.ylabel is not None:
             plt.ylabel(self.ylabel, fontsize=labelfontsize)
-            
+
+    def _add_colorbar(self, mappable):
+        self.cbar = self.fig.colorbar(mappable, orientation="horizontal", shrink=0.75, pad=0.11, drawedges=True)
+
+        # label every boundary except the ones on the end of the colorbar
+        self.cbar.set_ticks(ticks=self.cbar.boundaries[1:-1])
 
     def show_land(self, color='lightgrey'):
         self.ax.add_feature(cfeature.LAND, facecolor=color)
@@ -104,6 +113,7 @@ class NCL_Plot:
                edgecolor=ec,
                facecolor=fc)
 
+    #TODO: allow changes in font size from external call
     def add_titles(self, maintitle=None, lefttitle=None, righttitle=None, xlabel=None, ylabel=None):
         set_titles_and_labels(self.ax, maintitle, lefttitle, righttitle, xlabel, ylabel)
 

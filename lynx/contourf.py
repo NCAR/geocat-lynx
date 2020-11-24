@@ -6,13 +6,12 @@ import warnings
 import numpy as np
 import cartopy.crs as ccrs
 
-
-
 from _plot_util import NCL_Plot
+
 
 class Contour(NCL_Plot):
     # child class constructor
-    def  __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs):
 
         # set class defaults
         self._default_cmap = 'coolwarm'
@@ -54,33 +53,32 @@ class Contour(NCL_Plot):
         # Create plot
         if kwargs.get('contour_fill') is not False:
             self.cf = self.ax.contourf(self.data,
-                                  levels=self.levels,
-                                  cmap=self.cmap,
-                                  transform=self.projection,
+                                       levels=self.levels,
+                                       cmap=self.cmap,
+                                       transform=self.projection,
                                        extent=[-180, 180, -90, 90])
 
         if kwargs.get('contour_lines') is not False:
             self.cl = self.ax.contour(self.data,
-                                  levels=self.levels,
-                                  colors='black',
-                                  alpha=0.8,
-                                  linewidths=0.4,
-                                  linestyles='solid',
-                                  transform=self.projection,
-                                 extent=[-180, 180, -90, 90])
+                                      levels=self.levels,
+                                      colors='black',
+                                      alpha=0.8,
+                                      linewidths=0.4,
+                                      linestyles='solid',
+                                      transform=self.projection,
+                                      extent=[-180, 180, -90, 90])
 
         self._set_NCL_style(self.ax)
 
-
+        # call colorbar creation from parent class
+        # set colorbar if specified
+        if self.colorbar is not False and self.colorbar is not 'off':
+            self._add_colorbar(self.cf)
 
     def _estimate_flevels(self):
-        #TODO: flesh out
+        # TODO: flesh out
         print("estimate flevels")
 
     def _estimate_clevels(self):
-        #TODO: flesh out
+        # TODO: flesh out
         print("estimate clevels")
-
-
-
-
